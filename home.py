@@ -15,9 +15,13 @@ from langchain_core.runnables import RunnablePassthrough
 # Load environment variables from .env file
 load_dotenv()
 
-def on_api_key_entered(api_key):
-    os.environ["OPENAI_API_KEY"] = api_key
-    st.success("API Key configurada correctamente!", icon="✅")
+API_KEY = os.getenv("OPENAI_API_KEY")
+if API_KEY is None:
+    raise ValueError("OPENAI_API_KEY not found in environment variables")
+
+# def on_api_key_entered(api_key):
+    #
+    #st.success("API Key configurada correctamente!", icon="✅")
 
 # Initialize vector_store in session state
 if 'vector_store' not in st.session_state:
@@ -65,7 +69,7 @@ def chunk_data(docs, chunk_size=500, chunk_overlap=50):
 
 # Function to create embeddings and Chroma DB
 def create_embeddings_chroma(chunks):
-    embeddings = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=api_key)
+    embeddings = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=API_KEY)
     try:
         vector_store = Chroma.from_documents(chunks, embeddings)
         return vector_store
@@ -83,7 +87,7 @@ def generate_response(q):
         return "PorFavor suba un documento primero."
 
     try:
-        chat_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.5, api_key=api_key)
+        chat_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.5, api_key= API_KEY)
         
         system_prompt = """
         Eres un asistente para la división del Govlab de la Universidad de la Sabana: El GovLab es un laboratorio de innovación de la Universidad de La Sabana, 
@@ -132,9 +136,9 @@ os.makedirs(documents_folder, exist_ok=True)
 
 # Sidebar
 with st.sidebar: 
-    api_key = st.text_input("Ingresa tu API Key de OpenAI", type="password")
-    if api_key:
-        on_api_key_entered(api_key)
+    #api_key = st.text_input("Ingresa tu API Key de OpenAI", type="password")
+    #if api_key:
+    #   on_api_key_entered(api_key)
         
     uploaded_files = st.file_uploader("Sube tus documentos ACÁ", type=["pdf", "csv", "txt", "xlsx", "docx"], accept_multiple_files=True)
     add_data = st.button("Cargar Documentos")
