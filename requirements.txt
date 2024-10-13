@@ -1,7 +1,9 @@
-openai
-langchain
-docx2txt
-pypdf
 streamlit
-chromadb
-tiktoken
+python-dotenv
+langchain-openai
+langchain
+langchain-core
+chroma
+PyPDF2
+python-docx
+pandas
